@@ -1,6 +1,6 @@
 import './App.css';
 import app from './firebase.init';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { getAuth, GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { useState } from 'react';
 
 const auth = getAuth(app);
@@ -8,9 +8,10 @@ const auth = getAuth(app);
 function App() {
   const [user, setUser] = useState({});
 
-  const provider = new GoogleAuthProvider();
+  //  sign in with google 
+  const googleProvider = new GoogleAuthProvider();
   const handleSignInWithGoogle = () => {
-    signInWithPopup(auth, provider)
+    signInWithPopup(auth, googleProvider)
       .then((result) => {
         const user = result.user;
         setUser(user);
@@ -20,7 +21,7 @@ function App() {
         console.error('error', error);
       })
   }
-
+  // sign out 
   const handleSingOut = () => {
     signOut(auth)
       .then(() => {
@@ -31,14 +32,31 @@ function App() {
       })
   }
 
+  // sing in with github 
+  const githubProdvider = new GithubAuthProvider();
+
+  const handleSiginInWithGithub = () => {
+    signInWithPopup(auth, githubProdvider)
+      .then((result) => {
+        const user = result.user;
+        setUser(user);
+        console.log(user);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+
+  }
 
   return (
     <div className="App">
       <h1>Simple Firebase Authentication.</h1>
       {/* conditional rendering  */}
-      {user.email ? <button onClick={handleSingOut}>Sing Out</button> :
-        <button onClick={handleSignInWithGoogle}>Sign In with Google</button>
-
+      {user.uid ? <button onClick={handleSingOut}>Sign Out</button> :
+        <>
+          <button onClick={handleSignInWithGoogle}>Sign In with Google</button>
+          <button onClick={handleSiginInWithGithub}>Sign in with Github</button>
+        </>
       }
 
       <h2>Name : {user.displayName}</h2>
